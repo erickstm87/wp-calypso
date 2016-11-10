@@ -130,7 +130,7 @@ $(CLIENT_CONFIG_FILE): .env config/$(CALYPSO_ENV).json config/client.json server
 
 build/_components.scss: $(SASS_FILES)
 	@mkdir -p build
-	@echo "$(SASS_FILES)" | tr " " "\n" | sed "/^assets\// d ; s/^client\//@import '/; s/$$/';/" > $@
+	@echo "$(SASS_FILES)" | tr " " "\n" | sed "/^assets\// d ; /iframe\.scss/ d ; s/^client\//@import '/; s/$$/';/" > $@
 
 public/style-rtl.css: public/style.css
 
