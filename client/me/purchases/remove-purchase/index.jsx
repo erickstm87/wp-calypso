@@ -74,10 +74,9 @@ const RemovePurchase = React.createClass( {
 		this.setState( { isDialogVisible: true } );
 	},
 
-	openChat( event ) {
-		event.preventDefault();
-
+	openChat() {
 		olarkActions.expandBox();
+		this.setState( { isDialogVisible: false } );
 	},
 
 	changeSurveyStep() {
@@ -168,14 +167,13 @@ const RemovePurchase = React.createClass( {
 		);
 	},
 
-	renderChatLink() {
-		return (
-			<span className="remove-purchase__chat-link-container">
-				{ this.translate( 'Need help? {{a}}Chat with us{{/a}}', {
-					components: { a: <a href="#" onClick={ this.openChat } /> }
-				} ) }
-			</span>
-		);
+	getChatButton() {
+		return {
+			action: 'chat',
+			additionalClassNames: 'remove-purchase__chat-button is-borderless',
+			onClick: this.openChat,
+			label: this.translate( 'Need help? Chat with us' ),
+		};
 	},
 
 	renderDomainDialog() {
@@ -194,7 +192,7 @@ const RemovePurchase = React.createClass( {
 			productName = getName( getPurchase( this.props ) );
 
 		if ( this.props.showChatLink && config.isEnabled( 'upgrades/precancellation-chat' ) ) {
-			buttons.unshift( this.renderChatLink() );
+			buttons.unshift( this.getChatButton() );
 		}
 
 		return (
@@ -269,7 +267,7 @@ const RemovePurchase = React.createClass( {
 		}
 
 		if ( this.props.showChatLink && config.isEnabled( 'upgrades/precancellation-chat' ) ) {
-			buttonsArr.unshift( this.renderChatLink() );
+			buttonsArr.unshift( this.getChatButton() );
 		}
 
 		return (
