@@ -95,29 +95,40 @@ export function requestThemes( siteId, isJetpack = false, query = {} ) {
 /**
  * Triggers a network request to fetch a specific theme from a site.
  *
- * @param  {Number}   siteId Site ID
  * @param  {Number}   themeId Theme ID
+ * @param  {Number}   siteId Site ID
+ * @param  {Boolean}  isJetpack If the site is a Jetpack site
  * @return {Function}        Action thunk
  */
-export function requestTheme( siteId, themeId ) {
+export function requestTheme( themeId, siteId, isJetpack = false ) {
 	return ( dispatch ) => {
+		let siteIdToQuery, siteIdToStore;
+
+		if ( isJetpack ) {
+			siteIdToQuery = siteId;
+			siteIdToStore = siteId;
+		} else {
+			siteIdToQuery = null;
+			siteIdToStore = 'wpcom'; // Themes for all wpcom sites go into 'wpcom' subtree
+		}
+
 		dispatch( {
 			type: THEME_REQUEST,
-			siteId,
+			siteId: siteIdToStore,
 			themeId
 		} );
 
-		return wpcom.site( siteId ).theme( themeId ).get().then( ( theme ) => {
+		return wpcom.undocumented().themeDetails( themeId, siteIdToQuery ).then( ( theme ) => {
 			dispatch( receiveTheme( theme ) );
 			dispatch( {
 				type: THEME_REQUEST_SUCCESS,
-				siteId,
+				siteId: siteIdToStore,
 				themeId
 			} );
 		} ).catch( ( error ) => {
 			dispatch( {
 				type: THEME_REQUEST_FAILURE,
-				siteId,
+				siteId: siteIdToStore,
 				themeId,
 				error
 			} );

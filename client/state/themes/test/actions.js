@@ -224,9 +224,9 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.get( '/rest/v1.1/sites/2916284/themes/413' )
-				.reply( 200, { ID: 413, title: 'Ribs & Chicken' } )
-				.get( '/rest/v1.1/sites/2916284/themes/420' )
+				.get( '/rest/v1.2/themes/twentysixteen' )
+				.reply( 200, { id: 'twentysixteen', title: 'Twenty Sixteen' } )
+				.get( '/rest/v1.2/themes/twentyumpteen' )
 				.reply( 404, {
 					error: 'unknown_theme',
 					message: 'Unknown theme'
@@ -234,42 +234,42 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch request action when thunk triggered', () => {
-			requestTheme( 2916284, 413 )( spy );
+			requestTheme( 'twentysixteen', 2916284 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: THEME_REQUEST,
-				siteId: 2916284,
-				themeId: 413
+				siteId: 'wpcom',
+				themeId: 'twentysixteen'
 			} );
 		} );
 
 		it( 'should dispatch themes receive action when request completes', () => {
-			return requestTheme( 2916284, 413 )( spy ).then( () => {
+			return requestTheme( 'twentysixteen', 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEMES_RECEIVE,
 					themes: [
-						sinon.match( { ID: 413, title: 'Ribs & Chicken' } )
+						sinon.match( { id: 'twentysixteen', title: 'Twenty Sixteen' } )
 					]
 				} );
 			} );
 		} );
 
 		it( 'should dispatch themes request success action when request completes', () => {
-			return requestTheme( 2916284, 413 )( spy ).then( () => {
+			return requestTheme( 'twentysixteen', 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_REQUEST_SUCCESS,
-					siteId: 2916284,
-					themeId: 413
+					siteId: 'wpcom',
+					themeId: 'twentysixteen'
 				} );
 			} );
 		} );
 
 		it( 'should dispatch fail action when request fails', () => {
-			return requestTheme( 2916284, 420 )( spy ).then( () => {
+			return requestTheme( 'twentyumpteen', 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_REQUEST_FAILURE,
-					siteId: 2916284,
-					themeId: 420,
+					siteId: 'wpcom',
+					themeId: 'twentyumpteen',
 					error: sinon.match( { message: 'Unknown theme' } )
 				} );
 			} );
