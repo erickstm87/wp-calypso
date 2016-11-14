@@ -27,6 +27,37 @@ import {
 } from '../selectors';
 import ThemeQueryManager from 'lib/query-manager/theme';
 
+const twentyfifteen = {
+	id: 'twentyfifteen',
+	name: 'Twenty Fifteen',
+	author: 'the WordPress team',
+	screenshot: 'https://i1.wp.com/theme.wordpress.com/wp-content/themes/pub/twentyfifteen/screenshot.png',
+	stylesheet: 'pub/twentyfifteen',
+	demo_uri: 'https://twentyfifteendemo.wordpress.com/',
+	author_uri: 'https://wordpress.org/'
+};
+
+const twentysixteen = {
+	id: 'twentysixteen',
+	name: 'Twenty Sixteen',
+	author: 'the WordPress team',
+	screenshot: 'https://i0.wp.com/theme.wordpress.com/wp-content/themes/pub/twentysixteen/screenshot.png',
+	stylesheet: 'pub/twentysixteen',
+	demo_uri: 'https://twentysixteendemo.wordpress.com/',
+	author_uri: 'https://wordpress.org/'
+};
+
+const mood = {
+	id: 'mood',
+	name: 'Mood',
+	author: 'Automattic',
+	screenshot: 'mood.jpg',
+	price: '$20',
+	stylesheet: 'premium/mood',
+	demo_uri: 'https://mooddemo.wordpress.com/',
+	author_uri: 'https://wordpress.com/themes/'
+};
+
 describe( 'themes selectors', () => {
 	beforeEach( () => {
 		getThemes.memoizedSelector.cache.clear();
@@ -37,34 +68,19 @@ describe( 'themes selectors', () => {
 	describe( '#getThemes()', () => {
 		it( 'should return an array of theme objects for the site', () => {
 			const themeObjects = {
-				2916284: {
-					'3d097cb7c5473c169bba0eb8e3c6cb64': {
-						ID: 841,
-						site_ID: 2916284,
-						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-						title: 'Hello World'
-					},
-					'6c831c187ffef321eb43a67761a525a3': {
-						ID: 413,
-						site_ID: 2916284,
-						global_ID: '6c831c187ffef321eb43a67761a525a3',
-						title: 'Ribs &amp; Chicken'
-					}
+				wpcom: {
+					mood
 				},
 				77203074: {
-					'0fcb4eb16f493c19b627438fdc18d57c': {
-						ID: 120,
-						site_ID: 77203074,
-						global_ID: 'f0cb4eb16f493c19b627438fdc18d57c',
-						title: 'Steak &amp; Eggs'
-					}
+					twentyfifteen,
+					twentysixteen
 				}
 			};
 			const state = {
 				themes: {
 					queries: {
-						2916284: new ThemeQueryManager( {
-							items: themeObjects[ 2916284 ]
+						wpcom: new ThemeQueryManager( {
+							items: themeObjects.wpcom
 						} ),
 						77203074: new ThemeQueryManager( {
 							items: themeObjects[ 77203074 ]
@@ -74,7 +90,7 @@ describe( 'themes selectors', () => {
 				}
 			};
 
-			expect( getThemes( state, 2916284 ) ).to.have.members( values( themeObjects[ 2916284 ] ) );
+			expect( getThemes( state, 77203074 ) ).to.have.members( values( themeObjects[ 77203074 ] ) );
 		} );
 	} );
 
@@ -89,24 +105,18 @@ describe( 'themes selectors', () => {
 			expect( theme ).to.be.null;
 		} );
 
-		it( 'should return the object for the theme site ID, theme ID pair', () => {
-			const themeObject = {
-				ID: 841,
-				site_ID: 2916284,
-				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-				title: 'Hello World'
-			};
+		it( 'should return the object for the site ID, theme ID pair', () => {
 			const theme = getTheme( {
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
-							items: { 841: themeObject }
+							items: { twentysixteen }
 						} )
 					}
 				}
-			}, 2916284, 841 );
+			}, 2916284, 'twentysixteen' );
 
-			expect( theme ).to.equal( themeObject );
+			expect( theme ).to.equal( twentysixteen );
 		} );
 	} );
 
@@ -116,7 +126,7 @@ describe( 'themes selectors', () => {
 				themes: {
 					queries: {}
 				}
-			}, 2916284, { search: 'Ribs' } );
+			}, 2916284, { search: 'Sixteen' } );
 
 			expect( siteThemes ).to.be.null;
 		} );
@@ -131,7 +141,7 @@ describe( 'themes selectors', () => {
 						} )
 					}
 				}
-			}, 2916284, { search: 'Ribs' } );
+			}, 2916284, { search: 'Sixteen' } );
 
 			expect( siteThemes ).to.be.null;
 		} );
@@ -142,26 +152,19 @@ describe( 'themes selectors', () => {
 					queries: {
 						2916284: new ThemeQueryManager( {
 							items: {
-								841: {
-									ID: 841,
-									site_ID: 2916284,
-									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-									title: 'Ribs &amp; Chicken'
-								}
+								twentysixteen
 							},
 							queries: {
-								'[["search","Ribs"]]': {
-									itemKeys: [ 841 ]
+								'[["search","Sixteen"]]': {
+									itemKeys: [ 'twentysixteen' ]
 								}
 							}
 						} )
 					}
 				}
-			}, 2916284, { search: 'Ribs' } );
+			}, 2916284, { search: 'Sixteen' } );
 
-			expect( siteThemes ).to.eql( [
-				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Ribs & Chicken' }
-			] );
+			expect( siteThemes ).to.eql( [ twentysixteen ] );
 		} );
 
 		it( 'should return null if we know the number of found items but the requested set hasn\'t been received', () => {
@@ -170,23 +173,18 @@ describe( 'themes selectors', () => {
 					queries: {
 						2916284: new ThemeQueryManager( {
 							items: {
-								1204: {
-									ID: 1204,
-									site_ID: 2916284,
-									global_ID: '48b6010b559efe6a77a429773e0cbf12',
-									title: 'Sweet &amp; Savory'
-								}
+								twentyfifteen
 							},
 							queries: {
-								'[["search","Sweet"]]': {
-									itemKeys: [ 1204, undefined ],
+								'[["search","Fifteen"]]': {
+									itemKeys: [ 'twentyfifteen', undefined ],
 									found: 2
 								}
 							}
 						} )
 					}
 				}
-			}, 2916284, { search: 'Sweet', number: 1, page: 2 } );
+			}, 2916284, { search: 'Fifteen', number: 1, page: 2 } );
 
 			expect( siteThemes ).to.be.null;
 		} );
@@ -198,7 +196,7 @@ describe( 'themes selectors', () => {
 				themes: {
 					queryRequests: {}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { search: 'Sixteen' } );
 
 			expect( isRequesting ).to.be.false;
 		} );
@@ -207,10 +205,10 @@ describe( 'themes selectors', () => {
 			const isRequesting = isRequestingThemesForQuery( {
 				themes: {
 					queryRequests: {
-						'2916284:{"search":"Hel"}': true
+						'2916284:{"search":"Six"}': true
 					}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { search: 'Sixteen' } );
 
 			expect( isRequesting ).to.be.false;
 		} );
@@ -219,10 +217,10 @@ describe( 'themes selectors', () => {
 			const isRequesting = isRequestingThemesForQuery( {
 				themes: {
 					queryRequests: {
-						'2916284:{"search":"Hello"}': true
+						'2916284:{"search":"Sixteen"}': true
 					}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { search: 'Sixteen' } );
 
 			expect( isRequesting ).to.be.true;
 		} );
@@ -231,10 +229,10 @@ describe( 'themes selectors', () => {
 			const isRequesting = isRequestingThemesForQuery( {
 				themes: {
 					queryRequests: {
-						'2916284:{"search":"Hello"}': false
+						'2916284:{"search":"Sixteen"}': false
 					}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { search: 'Sixteen' } );
 
 			expect( isRequesting ).to.be.false;
 		} );
@@ -246,7 +244,7 @@ describe( 'themes selectors', () => {
 				themes: {
 					queries: {}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { search: 'Sixteen' } );
 
 			expect( found ).to.be.null;
 		} );
@@ -257,18 +255,18 @@ describe( 'themes selectors', () => {
 					queries: {
 						2916284: new ThemeQueryManager( {
 							items: {
-								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+								twentysixteen
 							},
 							queries: {
-								'[["search","Hello"]]': {
-									itemKeys: [ 841 ],
+								'[["search","Sixteen"]]': {
+									itemKeys: [ 'twentysixteen' ],
 									found: 1
 								}
 							}
 						} )
 					}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { search: 'Sixteen' } );
 
 			expect( found ).to.equal( 1 );
 		} );
@@ -280,7 +278,7 @@ describe( 'themes selectors', () => {
 						2916284: new ThemeQueryManager( {
 							items: {},
 							queries: {
-								'[["search","Hello"]]': {
+								'[["search","Umpteen"]]': {
 									itemKeys: [],
 									found: 0
 								}
@@ -288,7 +286,7 @@ describe( 'themes selectors', () => {
 						} )
 					}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { search: 'Umpteen' } );
 
 			expect( found ).to.equal( 0 );
 		} );
@@ -300,7 +298,7 @@ describe( 'themes selectors', () => {
 				themes: {
 					queries: {}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { search: 'Sixteen' } );
 
 			expect( lastPage ).to.be.null;
 		} );
@@ -311,18 +309,18 @@ describe( 'themes selectors', () => {
 					queries: {
 						2916284: new ThemeQueryManager( {
 							items: {
-								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+								twentysixteen
 							},
 							queries: {
-								'[["search","Hello"]]': {
-									itemKeys: [ 841 ],
+								'[["search","Sixteen"]]': {
+									itemKeys: [ 'sixteen' ],
 									found: 1
 								}
 							}
 						} )
 					}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { search: 'Sixteen' } );
 
 			expect( lastPage ).to.equal( 1 );
 		} );
@@ -333,20 +331,20 @@ describe( 'themes selectors', () => {
 					queries: {
 						2916284: new ThemeQueryManager( {
 							items: {
-								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+								twentysixteen
 							},
 							queries: {
-								'[["search","Hello"]]': {
-									itemKeys: [ 841 ],
-									found: 4
+								'[["search","Twenty"]]': {
+									itemKeys: [ 'twentysixteen' ],
+									found: 7
 								}
 							}
 						} )
 					}
 				}
-			}, 2916284, { search: 'Hello', page: 3, number: 1 } );
+			}, 2916284, { search: 'Twenty', page: 3, number: 1 } );
 
-			expect( lastPage ).to.equal( 4 );
+			expect( lastPage ).to.equal( 7 );
 		} );
 
 		it( 'should return 1 if there are no found themes', () => {
@@ -356,7 +354,7 @@ describe( 'themes selectors', () => {
 						2916284: new ThemeQueryManager( {
 							items: {},
 							queries: {
-								'[["search","Hello"]]': {
+								'[["search","Umpteen"]]': {
 									itemKeys: [],
 									found: 0
 								}
@@ -364,7 +362,7 @@ describe( 'themes selectors', () => {
 						} )
 					}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { search: 'Umpteen' } );
 
 			expect( lastPage ).to.equal( 1 );
 		} );
@@ -376,7 +374,7 @@ describe( 'themes selectors', () => {
 				themes: {
 					queries: {}
 				}
-			}, 2916284, { search: 'Hello' } );
+			}, 2916284, { search: 'Umpteen' } );
 
 			expect( isLastPage ).to.be.null;
 		} );
@@ -387,18 +385,18 @@ describe( 'themes selectors', () => {
 					queries: {
 						2916284: new ThemeQueryManager( {
 							items: {
-								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+								twentysixteen
 							},
 							queries: {
-								'[["search","Hello"]]': {
-									itemKeys: [ 841 ],
-									found: 4
+								'[["search","Twenty"]]': {
+									itemKeys: [ 'twentysixteen' ],
+									found: 7
 								}
 							}
 						} )
 					}
 				}
-			}, 2916284, { search: 'Hello', page: 3, number: 1 } );
+			}, 2916284, { search: 'Twenty', page: 6, number: 1 } );
 
 			expect( isLastPage ).to.be.false;
 		} );
@@ -409,18 +407,18 @@ describe( 'themes selectors', () => {
 					queries: {
 						2916284: new ThemeQueryManager( {
 							items: {
-								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+								twentysixteen
 							},
 							queries: {
-								'[["search","Hello"]]': {
-									itemKeys: [ 841 ],
-									found: 4
+								'[["search","Twenty"]]': {
+									itemKeys: [ 'twentysixteen' ],
+									found: 7
 								}
 							}
 						} )
 					}
 				}
-			}, 2916284, { search: 'Hello', page: 4, number: 1 } );
+			}, 2916284, { search: 'Twenty', page: 7, number: 1 } );
 
 			expect( isLastPage ).to.be.true;
 		} );
@@ -431,18 +429,18 @@ describe( 'themes selectors', () => {
 					queries: {
 						2916284: new ThemeQueryManager( {
 							items: {
-								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+								twentysixteen
 							},
 							queries: {
-								'[["search","Hello"]]': {
-									itemKeys: [ 841 ],
+								'[["search","Sixteen"]]': {
+									itemKeys: [ 'twentysixteen' ],
 									found: 1
 								}
 							}
 						} )
 					}
 				}
-			}, 2916284, { search: 'Hello', number: 1 } );
+			}, 2916284, { search: 'Sixteen', number: 1 } );
 
 			expect( isLastPage ).to.be.true;
 		} );

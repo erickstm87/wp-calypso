@@ -13,10 +13,7 @@ import config from 'config';
 import { getSiteSlug, getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { isPremiumTheme, oldShowcaseUrl } from './utils';
-import {
-	getSerializedThemesQuery,
-	normalizeThemeForDisplay
-} from './utils';
+import { getSerializedThemesQuery } from './utils';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -88,7 +85,7 @@ export const getThemesForQuery = createSelector(
 			return null;
 		}
 
-		return themes.map( normalizeThemeForDisplay );
+		return themes;
 	},
 	( state ) => state.themes.queries,
 	( state, siteId, query ) => getSerializedThemesQuery( query, siteId )
