@@ -6,7 +6,7 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var Gravatar = require( 'components/gravatar' );
+var Gravatar = require( 'components/gravatar' ).default;
 
 module.exports = React.createClass( {
 	displayName: 'UserItem',

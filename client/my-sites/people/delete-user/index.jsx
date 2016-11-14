@@ -18,7 +18,7 @@ const Card = require( 'components/card' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
 	AuthorSelector = require( 'blocks/author-selector' ),
 	UsersActions = require( 'lib/users/actions' ),
-	Gravatar = require( 'components/gravatar' ),
+	Gravatar = require( 'components/gravatar' ).default,
 	accept = require( 'lib/accept' ),
 	analytics = require( 'lib/analytics' );
 

@@ -6,7 +6,7 @@ const React = require( 'react' );
 /**
  * Internal dependencies
  */
-const Gravatar = require( 'components/gravatar' ),
+const Gravatar = require( 'components/gravatar' ).default,
 	user = require( 'lib/user' )(),
 	AuthorSelector = require( 'blocks/author-selector' ),
 	PostActions = require( 'lib/posts/actions' ),
