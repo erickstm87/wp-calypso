@@ -233,46 +233,52 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch request action when thunk triggered', () => {
-			requestTheme( 'twentysixteen', 2916284 )( spy );
+		context( 'with a wpcom site', () => {
+			it( 'should dispatch request action when thunk triggered', () => {
+				requestTheme( 'twentysixteen', 2916284 )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
-				type: THEME_REQUEST,
-				siteId: 'wpcom',
-				themeId: 'twentysixteen'
-			} );
-		} );
-
-		it( 'should dispatch themes receive action when request completes', () => {
-			return requestTheme( 'twentysixteen', 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: THEMES_RECEIVE,
-					themes: [
-						sinon.match( { id: 'twentysixteen', title: 'Twenty Sixteen' } )
-					]
-				} );
-			} );
-		} );
-
-		it( 'should dispatch themes request success action when request completes', () => {
-			return requestTheme( 'twentysixteen', 2916284 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: THEME_REQUEST_SUCCESS,
+					type: THEME_REQUEST,
 					siteId: 'wpcom',
 					themeId: 'twentysixteen'
 				} );
 			} );
-		} );
 
-		it( 'should dispatch fail action when request fails', () => {
-			return requestTheme( 'twentyumpteen', 2916284 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: THEME_REQUEST_FAILURE,
-					siteId: 'wpcom',
-					themeId: 'twentyumpteen',
-					error: sinon.match( { message: 'Unknown theme' } )
+			it( 'should dispatch themes receive action when request completes', () => {
+				return requestTheme( 'twentysixteen', 2916284 )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_RECEIVE,
+						themes: [
+							sinon.match( { id: 'twentysixteen', title: 'Twenty Sixteen' } )
+						]
+					} );
 				} );
 			} );
+
+			it( 'should dispatch themes request success action when request completes', () => {
+				return requestTheme( 'twentysixteen', 2916284 )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEME_REQUEST_SUCCESS,
+						siteId: 'wpcom',
+						themeId: 'twentysixteen'
+					} );
+				} );
+			} );
+
+			it( 'should dispatch fail action when request fails', () => {
+				return requestTheme( 'twentyumpteen', 2916284 )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEME_REQUEST_FAILURE,
+						siteId: 'wpcom',
+						themeId: 'twentyumpteen',
+						error: sinon.match( { message: 'Unknown theme' } )
+					} );
+				} );
+			} );
+		} );
+		context( 'with a Jetpack site', () => {
+			// TODO!
+			// But do we have a theme details endpoint on Jetpack sites at all?
 		} );
 	} );
 
