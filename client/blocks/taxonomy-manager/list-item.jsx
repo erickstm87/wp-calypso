@@ -17,10 +17,12 @@ class TaxonomyManagerListItem extends Component {
 		name: PropTypes.string,
 		translate: PropTypes.func,
 		onClick: PropTypes.func,
+		onDelete: PropTypes.func,
 	};
 
 	static defaultProps = {
-		onClick: () => {}
+		onClick: () => {},
+		onDelete: () => {},
 	};
 
 	constructor( props ) {
@@ -33,7 +35,7 @@ class TaxonomyManagerListItem extends Component {
 	togglePopoverMenu = () => {
 		this.setState( {
 			popoverMenuOpen: ! this.state.popoverMenuOpen
-		} )
+		} );
 	}
 
 	render() {
@@ -60,7 +62,7 @@ class TaxonomyManagerListItem extends Component {
 						<Gridicon icon="pencil" size={ 18 } />
 						{ translate( 'Edit' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem>
+					<PopoverMenuItem onClick={ this.props.onDelete }>
 						<Gridicon icon="trash" size={ 18 } />
 						{ translate( 'Delete' ) }
 					</PopoverMenuItem>

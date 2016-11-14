@@ -28,6 +28,7 @@ import {
 	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
 } from 'state/terms/selectors';
+import { deleteTerm } from 'state/terms/actions';
 
 /**
  * Constants
@@ -106,11 +107,17 @@ export class TaxonomyManagerList extends Component {
 
 		const children = this.getTermChildren( item.ID );
 
-		const { translate, onTermClick } = this.props;
+		const { onTermClick, siteId, taxonomy, translate } = this.props;
 		const itemId = item.ID;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
 		const onClick = () => {
 			onTermClick( item );
+		};
+		const deleteConfirmText = translate( 'Are you sure you want to permanently delete this item?' );
+		const onDelete = () => {
+			if ( window.confirm( deleteConfirmText ) ) {
+				this.props.deleteTerm( siteId, taxonomy, itemId, item.slug );
+			}
 		};
 
 		return (
@@ -119,7 +126,7 @@ export class TaxonomyManagerList extends Component {
 					onClick={ onClick }
 					key={ itemId }
 					className="taxonomy-manager__list-item-card">
-					<ListItem name={ name } onClick={ onClick } />
+					<ListItem name={ name } onClick={ onClick } onDelete={ onDelete } />
 				</CompactCard>
 				{ children.length > 0 && (
 					<div className="taxonomy-manager__nested-list">
@@ -195,4 +202,4 @@ export default connect( ( state, ownProps ) => {
 		siteId,
 		query
 	};
-} )( localize( TaxonomyManagerList ) );
+}, { deleteTerm } )( localize( TaxonomyManagerList ) );
