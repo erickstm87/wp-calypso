@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import url from 'url';
 import qs from 'querystring';
 import { connect } from 'react-redux';
@@ -14,10 +14,17 @@ import {
 	getUserTempGravatar
 } from 'state/current-user/gravatar-status/selectors';
 
-export const Gravatar = React.createClass( {
-	displayName: 'Gravatar',
+export class Gravatar extends Component {
+	constructor() {
+		super( ...arguments );
+		this.state = {
+			failedToLoad: false
+		};
+	}
 
-	propTypes: {
+	static displayName = 'Gravatar';
+
+	static propTypes = {
 		user: React.PropTypes.object,
 		size: React.PropTypes.number,
 		imgSize: React.PropTypes.number,
@@ -26,21 +33,13 @@ export const Gravatar = React.createClass( {
 			React.PropTypes.string,
 			React.PropTypes.bool
 		] ),
-	},
+	};
 
-	getDefaultProps() {
+	static defaultProps = {
 		// The REST-API returns s=96 by default, so that is most likely to be cached
-		return {
-			imgSize: 96,
-			size: 32
-		};
-	},
-
-	getInitialState() {
-		return {
-			failedToLoad: false
-		};
-	},
+		imgSize: 96,
+		size: 32
+	};
 
 	getResizedImageURL( imageURL ) {
 		imageURL = imageURL || 'https://www.gravatar.com/avatar/0';
@@ -57,11 +56,11 @@ export const Gravatar = React.createClass( {
 
 		parsedURL.search = qs.stringify( query );
 		return url.format( parsedURL );
-	},
+	}
 
-	onError() {
+	onError = () => {
 		this.setState( { failedToLoad: true } );
-	},
+	}
 
 	render() {
 		const size = this.props.size;
@@ -81,7 +80,7 @@ export const Gravatar = React.createClass( {
 			<img alt={ alt } className="gravatar" src={ avatarURL } width={ size } height={ size } onError={ this.onError } />
 		);
 	}
-} );
+}
 
 export default connect( ( state, ownProps ) => {
 	const userId = ownProps.user && ownProps.user.ID;
